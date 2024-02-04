@@ -1,4 +1,4 @@
-# mobx-master-demo-app
+# MobX Master: RN Demo App
 
 A demo app with the middleware for the [Mobx Master Flipper Plugin](https://github.com/tranjog/flipper-plugin-mobx-master).
 It might be published as an npm package at a later stage, but for now please copy `./src/mobx-master` to your app, and initialize it as in the example below
