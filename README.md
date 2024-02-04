@@ -12,7 +12,10 @@ if (__DEV__) {
 ```
 
 [App.tsx](https://github.com/tranjog/mobx-master-demo-app/blob/main/App.tsx)
+
 [mobx-master](https://github.com/tranjog/mobx-master-demo-app/blob/main/src/mobx-master/index.ts)
+
+https://github.com/tranjog/flipper-plugin-mobx-master/assets/6737260/80169577-885e-42d3-a43e-f1c170df333c
 
 ## Acknowledgement
 
