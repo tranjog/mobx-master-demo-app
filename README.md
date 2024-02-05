@@ -4,7 +4,7 @@ A demo app with the middleware for the [Mobx Master Flipper Plugin](https://gith
 It might be published as an npm package at a later stage, but for now please copy `./src/mobx-master` to your app, and initialize it as in the example below
 
 ```
-import {MobxMaster} from './src/mobx-master/index';
+import {MobxMaster} from './src/mobx-master';
 
 if (__DEV__) {
   MobxMaster(['TodoStore', TodoStore], ['UserStore', UserStore]);
