@@ -23,7 +23,7 @@ const payloadsArray: Payload[] = [];
 
 let stores: Stores = new Map<string, StoreMapItem>();
 
-export const MobxMaster = (...mobxStores: any) => {
+export const MobxMaster = (...mobxStores: [any, any]) => {
   if (!__DEV__ || currentConnection) {
     return;
   }
@@ -79,7 +79,7 @@ const initPlugin = () => {
 };
 
 const makeMobxActionListener = () => {
-  let payload: any | undefined;
+  let payload: Payload | null;
   return (event: Event) => {
     if (!currentConnection) {
       return;
@@ -90,7 +90,7 @@ const makeMobxActionListener = () => {
         const startTime = new Date();
         const observableKeys = Object.keys(event.object ?? {});
         storeActions[storeName] = observableKeys;
-        const before: Record<string, any> = {};
+        const before: Record<string, object> = {};
         observableKeys.forEach(name => {
           if (stores.get(storeName)?.store[name]) {
             before[name] = toJS(stores.get(storeName)?.store[name]);
@@ -118,7 +118,7 @@ const makeMobxActionListener = () => {
       setTimeout(() => {
         const payloadToSend = payloadsArray[payloadsArray.length - 1];
         const currentStore = stores.get(payloadToSend.storeName);
-        const after: Record<string, any> = {};
+        const after: Record<string, object> = {};
         storeActions[payloadToSend.storeName].forEach(name => {
           if (currentStore?.store[name]) {
             after[name] = toJS(currentStore?.store[name]);
