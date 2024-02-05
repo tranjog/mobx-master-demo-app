@@ -1,5 +1,5 @@
 import {isAction} from 'mobx';
-import {Payload, PayloadArgs} from './types';
+import {Event, Payload, PayloadArgs, Stores} from './types';
 
 export const getActionsFromStore = (store: any): string[] => {
   const storeMethods = Object.values(
@@ -11,6 +11,30 @@ export const getActionsFromStore = (store: any): string[] => {
 
 export const getStoreName = (store: any[]): string => {
   return store?.[0] || '';
+};
+
+export const getActionStoreName = (event: Event, stores: Stores) => {
+  if (!event.name) {
+    return '';
+  }
+
+  let actionStoreName = '';
+
+  stores.forEach((store, storeName) => {
+    if (store.actions?.includes(event.name)) {
+      let containsAllKeys = true;
+      Object.keys(store?.store)?.forEach(key => {
+        if (!(key in event.object)) {
+          containsAllKeys = false;
+        }
+      });
+      if (containsAllKeys) {
+        actionStoreName = storeName;
+      }
+    }
+  });
+
+  return actionStoreName;
 };
 
 export const generatePayload = ({

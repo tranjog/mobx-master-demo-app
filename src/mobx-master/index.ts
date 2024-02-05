@@ -1,15 +1,27 @@
 //@ts-ignore
-import {addPlugin} from 'react-native-flipper';
+import {addPlugin, Flipper} from 'react-native-flipper';
 import {spy, toJS} from 'mobx';
 
-import {Payload, StoreMapItem, EmitAction, Event} from './types';
-import {getActionsFromStore, getStoreName, generatePayload} from './utils';
+import type {
+  Payload,
+  StoreMapItem,
+  EmitAction,
+  Event,
+  ActionListener,
+  Stores,
+} from './types';
+import {
+  getActionsFromStore,
+  getActionStoreName,
+  getStoreName,
+  generatePayload,
+} from './utils';
 
-let currentConnection: any = null;
+let currentConnection: Flipper.FlipperConnection | null = null;
 const storeActions: Record<string, string[]> = {};
 const payloadsArray: Payload[] = [];
 
-let stores = new Map<string, StoreMapItem>();
+let stores: Stores = new Map<string, StoreMapItem>();
 
 export const MobxMaster = (...mobxStores: any) => {
   if (!__DEV__ || currentConnection) {
@@ -24,7 +36,7 @@ export const MobxMaster = (...mobxStores: any) => {
   });
 
   initPlugin();
-  spy(makeMobxDebugger() as any);
+  spy(makeMobxActionListener() as ActionListener);
 };
 
 const initPlugin = () => {
@@ -66,35 +78,19 @@ const initPlugin = () => {
   }
 };
 
-const getActionStoreName = (property: string) => {
-  if (!property) {
-    return '';
-  }
-
-  let actionStoreName = '';
-
-  stores.forEach((store, storeName) => {
-    if (store.actions?.includes(property)) {
-      actionStoreName = storeName;
-    }
-  });
-
-  return actionStoreName;
-};
-
-const makeMobxDebugger = () => {
+const makeMobxActionListener = () => {
   let payload: any | undefined;
   return (event: Event) => {
     if (!currentConnection) {
       return;
     }
     if (!payload && event.name && event.type === 'action') {
-      const storeName = getActionStoreName(event.name);
+      const storeName = getActionStoreName(event, stores);
       if (storeName) {
         const startTime = new Date();
         const observableKeys = Object.keys(event.object ?? {});
         storeActions[storeName] = observableKeys;
-        const before: any = {};
+        const before: Record<string, any> = {};
         observableKeys.forEach(name => {
           if (stores.get(storeName)?.store[name]) {
             before[name] = toJS(stores.get(storeName)?.store[name]);
@@ -122,7 +118,7 @@ const makeMobxDebugger = () => {
       setTimeout(() => {
         const payloadToSend = payloadsArray[payloadsArray.length - 1];
         const currentStore = stores.get(payloadToSend.storeName);
-        const after: any = {};
+        const after: Record<string, any> = {};
         storeActions[payloadToSend.storeName].forEach(name => {
           if (currentStore?.store[name]) {
             after[name] = toJS(currentStore?.store[name]);
@@ -130,7 +126,7 @@ const makeMobxDebugger = () => {
         });
         payloadToSend.after = after;
         try {
-          currentConnection.send('action', payloadToSend);
+          currentConnection?.send('action', payloadToSend);
         } catch (error) {
           console.warn(error);
         }

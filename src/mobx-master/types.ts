@@ -1,3 +1,5 @@
+import type {PureSpyEvent} from 'mobx/dist/core/spy';
+
 export type PayloadArgs = {
   name: string;
   args?: any[];
@@ -40,12 +42,12 @@ export type StoreMapItem = {
   store: any;
 };
 
-export type Stores = {
-  [name: string]: StoreMapItem;
-};
+export type Stores = Map<string, StoreMapItem>;
 
 export type EmitAction = {
   storeKey: string;
   action: string;
   payload: string;
 };
+
+export type ActionListener = (change: PureSpyEvent) => void;
