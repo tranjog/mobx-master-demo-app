@@ -23,7 +23,7 @@ const payloadsArray: Payload[] = [];
 
 let stores: Stores = new Map<string, StoreMapItem>();
 
-export const MobxMaster = (...mobxStores: [any, any]) => {
+export const MobxMaster = (...mobxStores: [string, any][]) => {
   if (!__DEV__ || currentConnection) {
     return;
   }

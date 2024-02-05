@@ -13,7 +13,7 @@ import {observer} from 'mobx-react';
 import TodoStore from './src/stores/TodoStore';
 import UserStore from './src/stores/UserStore';
 
-import {MobxMaster} from './src/mobx-master/index';
+import {MobxMaster} from './src/mobx-master';
 
 if (__DEV__) {
   MobxMaster(['TodoStore', TodoStore], ['UserStore', UserStore]);
