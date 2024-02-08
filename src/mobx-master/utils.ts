@@ -2,9 +2,13 @@ import {isAction} from 'mobx';
 import {Event, Payload, PayloadArgs, Stores} from './types';
 
 export const getActionsFromStore = (store: any): string[] => {
-  const storeMethods = Object.values(
-    Object.getOwnPropertyNames(Object.getPrototypeOf(store)),
-  );
+  const storeMethods = [
+    ...new Set(
+      Object.values(
+        Object.getOwnPropertyNames(Object.getPrototypeOf(store)),
+      ).concat(Object.getOwnPropertyNames(store)),
+    ),
+  ].sort();
 
   return storeMethods.filter(method => isAction(store?.[method]));
 };

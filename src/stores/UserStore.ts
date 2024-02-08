@@ -1,24 +1,25 @@
 import {observable, action, makeObservable} from 'mobx';
 
 class UserStore {
-  @observable userName: string;
-  @observable age: number;
+  userName: string = 'Alice';
+  age: number = 30;
 
   constructor() {
-    makeObservable(this);
-    this.userName = 'Alice';
-    this.age = 30;
+    makeObservable(this, {
+      userName: observable,
+      age: observable,
+      setAge: action.bound,
+      setUserName: action.bound,
+    });
   }
 
-  @action
   public setUserName(name: string) {
     this.userName = name;
   }
 
-  @action
-  public setAge(age: number) {
+  public setAge = (age: number) => {
     this.age = age;
-  }
+  };
 }
 
 export default new UserStore();
